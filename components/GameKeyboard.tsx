@@ -20,6 +20,11 @@ export const GameKeyboard = ({values, dispatch}: GameKeyboardProps) =>
     `}
   >
     {values.map(({value, key}:GameStateItem) => (
-      <GameButton key={key} value={value} onPress={async () => dispatch({ type: 'increment', key })} />
+      <GameButton
+        key={key}
+        value={value}
+        onUp={async () => dispatch({ type: 'increment', key })}
+        onDown={async () => dispatch({type: 'decrement', key })}
+      />
     ))}
 </View>

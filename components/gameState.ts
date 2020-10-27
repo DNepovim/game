@@ -23,6 +23,18 @@ export interface GameStateAction {
 
 const reducer = (state: GameState, action: GameStateAction): GameState => {
   switch (action.type) {
+    case 'increment':
+      return {
+        ...state,
+        session: {
+          ...state.session,
+          clicks: ++state.session.clicks
+        },
+        values: state.values.map(item => item.key !== action.key ? item : {
+          ...item,
+          value: item.value > 8 ? 0 : ++item.value
+      })
+    }
     case 'decrement':
       return {
         ...state,
