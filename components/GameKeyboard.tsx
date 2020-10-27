@@ -2,7 +2,7 @@ import React, { Dispatch } from "react";
 import { css } from "@emotion/native";
 import { View } from 'react-native';
 import { GameButton } from "./GameButton";
-import { GameState, GameStateAction, GameStateItem } from "./GameState";
+import { GameState, GameStateAction, GameStateItem } from "./gameState";
 
 interface GameKeyboardProps {
   values: GameStateItem[]

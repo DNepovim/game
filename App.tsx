@@ -1,68 +1,24 @@
 import React, { useEffect, useReducer } from 'react';
 import { Text, View } from 'react-native';
 import { css } from '@emotion/native'
-import { GameState, GameStateAction, GameStateItem } from './components/GameState';
+import { GameState, useGameState } from './components/gameState';
 import { GameKeyboard } from './components/GameKeyboard';
+import { countScore } from './components/gameUtils';
 
 const getGameValue = (state: GameState): number => state.values.reduce((prev, cur) => prev + (cur.value * cur.coeficient), 0)
 
 
 export default function App() {
 
-  const countScore = (clicks:number):number => clicks > 50 ? 0 : 100 - (2*clicks)
-
-  const reducer = (state: GameState, action: GameStateAction): GameState => {
-    switch (action.type) {
-      case 'increment':
-        return {
-          ...state,
-          session: {
-            ...state.session,
-            clicks: ++state.session.clicks
-          },
-          values: state.values.map(item => item.key !== action.key ? item : {
-            ...item,
-            value: item.value > 8 ? 0 : ++item.value
-        })
-      }
-      case 'targetAchieved':
-        return {
-          ...state,
-          targetValue: getRandomNumber(),
-          session: {
-            ...state.session,
-            clicks: 0
-          },
-          score: state.score + countScore(state.session.clicks)
-        }
-      default:
-        throw new Error();
-    }
-  }
-
-  const initialValues: GameStateItem[] = [3, 2, 1, 6, 4, 2, 9, 6, 3].map((item, index) => ({ key: index, value: 0, coeficient: item }))
-
-  const maxNumber: number = initialValues.reduce((prev, cur) => prev + (cur.coeficient * 9), 0)
-
-  const getRandomNumber = () => Math.floor(Math.random() * maxNumber) +1
-
-  const initialState: GameState = {
-    targetValue: getRandomNumber(),
-    score: 0,
-    session: {
-      clicks: 0
-    },
-    values: initialValues
-  }
-
-
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [state, dispatch] = useGameState()
 
   useEffect(() => {
     if (state.targetValue === getGameValue(state)) {
       dispatch({type: 'targetAchieved'})
     }
   }, [state])
+
+
 
   const gameValue = getGameValue(state)
 
@@ -88,6 +44,7 @@ export default function App() {
           font-size: 60px;
           color: green;
           margin-bottom: 60px;
+          flex: auto
         `}
       >
         {state.targetValue}
