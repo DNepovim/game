@@ -1,19 +1,24 @@
 import { useReducer } from "react"
-import { countScore, getRandomNumber } from "./gameUtils"
+import { countScore, getGameValue, getRandomNumber } from "./gameUtils"
 
-export interface GameStateItem {
+export interface KeyState {
   key: number
   value: number
   coeficient: number
 }
 
+export interface Target {
+  value: number
+}
+
+
 export interface GameState {
-  targetValue: number
+  targets: Target[]
   score: number
   session: {
     clicks: number
   }
-  values: GameStateItem[]
+  keys: KeyState[]
 }
 
 export interface GameStateAction {
@@ -24,6 +29,7 @@ export interface GameStateAction {
 export enum GameStateActionType {
   Increment = 'increment',
   Decrement = 'decrement',
+  AddTarget = 'add-target',
   Achieved = 'achieved'
 }
 
@@ -36,7 +42,7 @@ const reducer = (state: GameState, action: GameStateAction): GameState => {
           ...state.session,
           clicks: ++state.session.clicks
         },
-        values: state.values.map(item => item.key !== action.key ? item : {
+        keys: state.keys.map(item => item.key !== action.key ? item : {
           ...item,
           value: item.value > 8 ? 0 : ++item.value
       })
@@ -48,15 +54,25 @@ const reducer = (state: GameState, action: GameStateAction): GameState => {
           ...state.session,
           clicks: ++state.session.clicks
         },
-        values: state.values.map(item => item.key !== action.key ? item : {
+        keys: state.keys.map(item => item.key !== action.key ? item : {
           ...item,
           value: item.value < 1 ? 9 : --item.value
       })
     }
+    case GameStateActionType.AddTarget:
+      if (state.targets.length >= 5) {
+        return state
+      }
+      return {
+        ...state,
+        targets: [...state.targets, {
+          value: getRandomNumber(initialValues)
+        }]
+      }
     case GameStateActionType.Achieved:
       return {
         ...state,
-        targetValue: getRandomNumber(state.values),
+        targets: state.targets.filter(target => target.value !== getGameValue(state)),
         session: {
           ...state.session,
           clicks: 0
@@ -68,15 +84,15 @@ const reducer = (state: GameState, action: GameStateAction): GameState => {
   }
 }
 
-const initialValues: GameStateItem[] = [3, 2, 1, 6, 4, 2, 9, 6, 3].map((item, index) => ({ key: index, value: 0, coeficient: item }))
+const initialValues: KeyState[] = [3, 2, 1, 6, 4, 2, 9, 6, 3].map((item, index) => ({ key: index, value: 0, coeficient: item }))
 
 const initialState: GameState = {
-  targetValue: getRandomNumber(initialValues),
+  targets: [],
   score: 0,
   session: {
     clicks: 0
   },
-  values: initialValues
+  keys: initialValues
 }
 
 export const useGameState = () => useReducer(reducer, initialState)

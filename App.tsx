@@ -3,9 +3,8 @@ import { Text, View } from 'react-native';
 import { css } from '@emotion/native'
 import { GameState, GameStateActionType, useGameState } from './components/gameState';
 import { GameKeyboard } from './components/GameKeyboard';
-import { countScore } from './components/gameUtils';
+import { countScore, getGameValue, getTargetsValues } from './components/gameUtils';
 
-const getGameValue = (state: GameState): number => state.values.reduce((prev, cur) => prev + (cur.value * cur.coeficient), 0)
 
 
 export default function App() {
@@ -13,10 +12,17 @@ export default function App() {
   const [state, dispatch] = useGameState()
 
   useEffect(() => {
-    if (state.targetValue === getGameValue(state)) {
-      dispatch({type: GameStateActionType.Achieved})
+    if (getTargetsValues(state).indexOf(getGameValue(state)) !== -1) {
+      dispatch({ type: GameStateActionType.Achieved })
     }
   }, [state])
+
+  useEffect(() => {
+    setInterval(() => {
+      dispatch({ type: GameStateActionType.AddTarget })
+    }, 2000)
+  }, [state])
+
 
   const gameValue = getGameValue(state)
 
@@ -45,7 +51,7 @@ export default function App() {
           flex: auto
         `}
       >
-        {state.targetValue}
+        {state.targets.map(item => item.value).join(', ')}
       </Text>
       <Text
         style={css`
@@ -59,7 +65,7 @@ export default function App() {
           margin: 20px 5% 15%
         `}
       >
-        <GameKeyboard values={state.values} dispatch={dispatch} />
+        <GameKeyboard values={state.keys} dispatch={dispatch} />
       </View>
     </View>
   );
