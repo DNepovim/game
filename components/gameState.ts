@@ -17,13 +17,19 @@ export interface GameState {
 }
 
 export interface GameStateAction {
-  type: 'increment' | 'decrement' | 'targetAchieved'
+  type: GameStateActionType
   key?: number
+}
+
+export enum GameStateActionType {
+  Increment = 'increment',
+  Decrement = 'decrement',
+  Achieved = 'achieved'
 }
 
 const reducer = (state: GameState, action: GameStateAction): GameState => {
   switch (action.type) {
-    case 'increment':
+    case GameStateActionType.Increment:
       return {
         ...state,
         session: {
@@ -35,7 +41,7 @@ const reducer = (state: GameState, action: GameStateAction): GameState => {
           value: item.value > 8 ? 0 : ++item.value
       })
     }
-    case 'decrement':
+    case GameStateActionType.Decrement:
       return {
         ...state,
         session: {
@@ -47,7 +53,7 @@ const reducer = (state: GameState, action: GameStateAction): GameState => {
           value: item.value < 1 ? 9 : --item.value
       })
     }
-    case 'targetAchieved':
+    case GameStateActionType.Achieved:
       return {
         ...state,
         targetValue: getRandomNumber(state.values),

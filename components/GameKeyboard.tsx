@@ -2,7 +2,7 @@ import React, { Dispatch } from "react";
 import { css } from "@emotion/native";
 import { View } from 'react-native';
 import { GameButton } from "./GameButton";
-import { GameState, GameStateAction, GameStateItem } from "./gameState";
+import { GameState, GameStateAction, GameStateActionType, GameStateItem } from "./gameState";
 
 interface GameKeyboardProps {
   values: GameStateItem[]
@@ -23,8 +23,8 @@ export const GameKeyboard = ({values, dispatch}: GameKeyboardProps) =>
       <GameButton
         key={key}
         value={value}
-        onUp={async () => dispatch({ type: 'increment', key })}
-        onDown={async () => dispatch({type: 'decrement', key })}
+        onUp={async () => dispatch({ type: GameStateActionType.Increment, key })}
+        onDown={async () => dispatch({type: GameStateActionType.Decrement, key })}
       />
     ))}
 </View>

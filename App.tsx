@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from 'react';
 import { Text, View } from 'react-native';
 import { css } from '@emotion/native'
-import { GameState, useGameState } from './components/gameState';
+import { GameState, GameStateActionType, useGameState } from './components/gameState';
 import { GameKeyboard } from './components/GameKeyboard';
 import { countScore } from './components/gameUtils';
 
@@ -14,11 +14,9 @@ export default function App() {
 
   useEffect(() => {
     if (state.targetValue === getGameValue(state)) {
-      dispatch({type: 'targetAchieved'})
+      dispatch({type: GameStateActionType.Achieved})
     }
   }, [state])
-
-
 
   const gameValue = getGameValue(state)
 
